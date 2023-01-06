@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
 import * as countriesLib from 'i18n-iso-countries';
 
@@ -12,7 +12,9 @@ import * as countriesLib from 'i18n-iso-countries';
   templateUrl: './user-form.component.html',
   styles: []
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent implements OnInit, OnDestroy {
+
+  endSub$: Subject<any> = new Subject();
   form!: FormGroup;
   isSubmitted = false;
   editmode = false;
@@ -31,6 +33,9 @@ export class UserFormComponent implements OnInit {
     this._initUserForm();
     this._getCountries();
     this._checkEditMode();
+  }
+  ngOnDestroy(): void {
+    this.endSub$.complete();
   }
 
   private _initUserForm() {
@@ -53,7 +58,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private _addUser(user: any) {
-    this.usersService.createUser(user).subscribe(
+    this.usersService.createUser(user).pipe(takeUntil(this.endSub$)).subscribe(
       (response: any) => {
         this.messageService.add({
           severity: 'success',
@@ -77,7 +82,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private _updateUser(id: any, user: any) {
-    this.usersService.updateUser(id, user).subscribe(
+    this.usersService.updateUser(id, user).pipe(takeUntil(this.endSub$)).subscribe(
       () => {
         this.messageService.add({
           severity: 'success',
@@ -101,7 +106,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private _checkEditMode() {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(takeUntil(this.endSub$)).subscribe((params: any) => {
       if (params['id']) {
         this.editmode = true;
         this.currentUserId = params['id'];

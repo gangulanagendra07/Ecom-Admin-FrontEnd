@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subject, takeUntil } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
 
 
@@ -10,8 +11,9 @@ import { UsersService } from 'src/app/services/users.service';
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss']
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, OnDestroy {
 
+  endSub$: Subject<any> = new Subject();
   users: any = [];
   isDelete: Boolean = false;
   confirmTure: boolean = false;
@@ -20,9 +22,12 @@ export class UsersListComponent implements OnInit {
   ngOnInit(): void {
     this.GetAllUsers();
   }
+  ngOnDestroy(): void {
+    this.endSub$.complete();
+  }
 
   private GetAllUsers() {
-    this.usersService.getAllUsers().subscribe(results => {
+    this.usersService.getAllUsers().pipe(takeUntil(this.endSub$)).subscribe(results => {
       this.users = results;
       console.log(results);
     }, err => {
@@ -39,7 +44,7 @@ export class UsersListComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.isDelete = false;
-        this.usersService.deleteUser(id).subscribe(data => {
+        this.usersService.deleteUser(id).pipe(takeUntil(this.endSub$)).subscribe(data => {
           this.GetAllUsers();
           this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Deleted Successfuly' });
         })

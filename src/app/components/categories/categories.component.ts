@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { MessageService } from 'primeng/api';
-import { timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { Router } from '@angular/router';
 
@@ -11,8 +11,9 @@ import { Router } from '@angular/router';
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss']
 })
-export class CategoriesComponent implements OnInit {
+export class CategoriesComponent implements OnInit, OnDestroy {
 
+  endSub$: Subject<any> = new Subject();
   categories: any = [];
   constructor(private categoriesService: CategoriesService,
     private messageService: MessageService,
@@ -27,9 +28,13 @@ export class CategoriesComponent implements OnInit {
       console.log(err);
     })
   }
+  ngOnDestroy(): void {
+    console.log("category");
+    this.endSub$.complete();
+  }
 
   DeleteCategory(id: any) {
-    this.categoriesService.deleteCategory(id).subscribe(data => {
+    this.categoriesService.deleteCategory(id).pipe(takeUntil(this.endSub$)).subscribe(data => {
       this.messageService.add({ severity: 'success', summary: 'Success', detail: data.message });
       // timer(2000).toPromise().then((done) => {
       //   this.location.getState();

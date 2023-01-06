@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { MessageService } from 'primeng/api';
-import { timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { UsersService } from 'src/app/services/users.service';
 
 @Component({
@@ -11,9 +11,9 @@ import { UsersService } from 'src/app/services/users.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
-
+  endSub$: Subject<any> = new Subject();
   registerForm!: FormGroup;
   errorMessage!: string;
   showSpinner = false;
@@ -23,6 +23,10 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.init();
     this.errorMessage = this.cookieService.get('register')
+  }
+  ngOnDestroy(): void {
+    console.log('registered')
+    this.endSub$.complete();
   }
 
   init() {
@@ -48,7 +52,7 @@ export class RegisterComponent implements OnInit {
       password: this.registerFormCtrl['password'].value,
       isAdmin: this.registerFormCtrl['isAdmin'].value
     }
-    this.usersService.register(body).subscribe(data => {
+    this.usersService.register(body).pipe(takeUntil(this.endSub$)).subscribe(data => {
       this.registerForm.reset();
       this.messageService.add({
         severity: 'success',

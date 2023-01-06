@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { TokenService } from 'src/app/services/token.service';
 import { UsersService } from 'src/app/services/users.service';
 
@@ -11,8 +11,9 @@ import { UsersService } from 'src/app/services/users.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
+  endSub$: Subject<any> = new Subject()
   loginForm!: FormGroup;
   errorMessage!: string;
   showSpinner = false;
@@ -21,6 +22,13 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.init();
+  }
+
+  ngOnDestroy(): void {
+    // this.endSub$.next();
+    console.log("destroying")
+    this.endSub$.complete();
+
   }
 
   init() {
@@ -38,7 +46,7 @@ export class LoginComponent implements OnInit {
       email: this.loginFormCtrl['email'].value,
       password: this.loginFormCtrl['password'].value,
     }
-    this.usersService.login(body).subscribe(data => {
+    this.usersService.login(body).pipe(takeUntil(this.endSub$)).subscribe(data => {
       console.log(data);
       this.errorMessage = "";
       this.tokenService.setToken(data.token);

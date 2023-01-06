@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
 import { MessageService } from 'primeng/api';
@@ -6,14 +6,16 @@ import { timer } from 'rxjs/internal/observable/timer';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { ProductsService } from 'src/app/services/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-product-form',
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss']
 })
-export class ProductFormComponent implements OnInit {
+export class ProductFormComponent implements OnInit, OnDestroy {
 
+  endSub$: Subject<any> = new Subject()
   editMode: Boolean = false;
   form!: FormGroup;
   categories: any = [];
@@ -26,6 +28,9 @@ export class ProductFormComponent implements OnInit {
     this._initForm();
     this._checkEditMode();
     this._getCategories();
+  }
+  ngOnDestroy(): void {
+    this.endSub$.complete();
   }
 
   private _initForm() {
@@ -71,7 +76,7 @@ export class ProductFormComponent implements OnInit {
   private _addProduct(productData: any) {
 
     if (this.editMode) {
-      this.productService.updateProduct(this.productId, productData).subscribe(data => {
+      this.productService.updateProduct(this.productId, productData).pipe(takeUntil(this.endSub$)).subscribe(data => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'product is updated' });
         timer(2000).toPromise().then((done) => {
           this.location.back();
@@ -83,7 +88,7 @@ export class ProductFormComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'error', detail: 'product is not updated' });
       })
     } else {
-      this.productService.createProduct(productData).subscribe(data => {
+      this.productService.createProduct(productData).pipe(takeUntil(this.endSub$)).subscribe(data => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'product is created' });
         timer(2000).toPromise().then((done) => {
           this.location.back();
@@ -97,7 +102,7 @@ export class ProductFormComponent implements OnInit {
     }
   }
   private _getCategories() {
-    this.categoriesService.getAllCategories().subscribe(results => {
+    this.categoriesService.getAllCategories().pipe(takeUntil(this.endSub$)).subscribe(results => {
       // this.categories = results.map((data: any) => data.name);
       this.categories = results;
     })
@@ -110,7 +115,7 @@ export class ProductFormComponent implements OnInit {
       if (param['id']) {
         this.editMode = true;
         this.productId = param['id'];
-        this.productService.getProductById(param['id']).subscribe(product => {
+        this.productService.getProductById(param['id']).pipe(takeUntil(this.endSub$)).subscribe(product => {
           console.log(product);
           this.form.controls['name'].setValue(product.name);
           this.form.controls['price'].setValue(product.price);

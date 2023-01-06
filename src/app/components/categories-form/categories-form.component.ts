@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { timer } from 'rxjs';
+import { Subject, takeUntil, timer } from 'rxjs';
 import { CategoriesService } from 'src/app/services/categories.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -11,8 +11,8 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './categories-form.component.html',
   styleUrls: ['./categories-form.component.scss']
 })
-export class CategoriesFormComponent implements OnInit {
-
+export class CategoriesFormComponent implements OnInit, OnDestroy {
+  endSub$: Subject<any> = new Subject();
   form!: FormGroup;
   editMode: Boolean = false;
   categoryId: any;
@@ -28,6 +28,10 @@ export class CategoriesFormComponent implements OnInit {
     })
     this.checkEditMode();
   }
+  ngOnDestroy(): void {
+    console.log("category form")
+    this.endSub$.complete();
+  }
 
   onCreate() {
     console.log(this.getFormData['color'].value)
@@ -37,7 +41,7 @@ export class CategoriesFormComponent implements OnInit {
       color: this.getFormData['color'].value
     }
     if (this.editMode) {
-      this.categorieService.updateCategory(this.categoryId, formData).subscribe(data => {
+      this.categorieService.updateCategory(this.categoryId, formData).pipe(takeUntil(this.endSub$)).subscribe(data => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'category is updated' });
         timer(2000).toPromise().then((done) => {
           this.location.back();
@@ -49,7 +53,7 @@ export class CategoriesFormComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'error', detail: 'category is not updated' });
       })
     } else {
-      this.categorieService.addCategory(formData).subscribe(data => {
+      this.categorieService.addCategory(formData).pipe(takeUntil(this.endSub$)).subscribe(data => {
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'category is created' });
         timer(2000).toPromise().then((done) => {
           this.location.back();
@@ -71,7 +75,7 @@ export class CategoriesFormComponent implements OnInit {
       if (param['id']) {
         this.editMode = true;
         this.categoryId = param['id'];
-        this.categorieService.getCategory(param['id']).subscribe(category => {
+        this.categorieService.getCategory(param['id']).pipe(takeUntil(this.endSub$)).subscribe(category => {
           this.form.controls['name'].setValue(category.name);
           this.form.controls['icon'].setValue(category.icon);
           this.form.controls['color'].setValue(category.color);
