@@ -1,0 +1,69 @@
+<div class="container-dashboard">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title dash-title">Dashboard</span>
+          <div class="row">
+            <div class="col-3">
+              <div class="card">
+                <div class="card-content d-card-1">
+                  <div class="d-item">
+                    <div>
+                      <i class="pi pi-shopping-cart"></i><br />
+                      <span class="name">Orders</span>
+                    </div>
+                    <span class="number">{{ statistics[0]?.orderCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card">
+                <div class="card-content d-card-2">
+                  <div class="d-item">
+                    <div>
+                      <i class="pi pi-shopping-bag"></i><br />
+                      <span class="name">Products</span>
+                    </div>
+                    <span class="number">{{
+                      statistics[1]?.productCount
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card">
+                <div class="card-content d-card-3">
+                  <div class="d-item">
+                    <div>
+                      <i class="pi pi-users"></i><br />
+                      <span class="name">Users</span>
+                    </div>
+                    <span class="number">{{ statistics[2]?.userCount }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="card">
+                <div class="card-content d-card-4">
+                  <div class="d-item">
+                    <div>
+                      <i class="pi pi-dollar"></i><br />
+                      <span class="name">Total Sales</span>
+                    </div>
+                    <span class="number">{{
+                      statistics[3]?.totalsales | currency
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

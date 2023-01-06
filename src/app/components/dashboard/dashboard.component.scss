@@ -1,0 +1,58 @@
+@import '~materialize-css/dist/css/materialize.min.css';
+
+
+.d-card-1 {
+  background-color: #FFE53B;
+  background-image: linear-gradient(147deg, #FFE53B 0%, #FF2525 74%);
+  border-radius: 5px;
+}
+
+.d-card-2 {
+  background-color: #21D4FD;
+  background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+
+}
+
+.d-card-3 {
+  background-color: #FF9A8B;
+  background-image: linear-gradient(90deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+
+  border-radius: 5px;
+}
+
+.d-card-4 {
+  background-color: #FF3CAC;
+  background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+
+  border-radius: 5px;
+}
+
+.dash-title {
+  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bolder;
+  color: #b13c58;
+}
+
+.d-item {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  color: aliceblue;
+  justify-content: space-between;
+
+  i {
+    font-size: 30px;
+    font-weight: bolder;
+  }
+
+  .name {
+    font-size: 25px;
+    font-weight: bolder;
+  }
+
+  .number {
+    font-size: 30px;
+    font-weight: bolder;
+  }
+}

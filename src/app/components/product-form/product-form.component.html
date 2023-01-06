@@ -1,0 +1,194 @@
+<p-toast position="top-right"></p-toast>
+<div class="admin-page">
+  <p-card
+    [header]="editMode ? 'Update Product' : 'Create Product'"
+    [subheader]="
+      editMode ? 'You can update product here' : 'You can add product here'
+    "
+  >
+    <div class="grid">
+      <div class="col-12">
+        <p-toolbar>
+          <div class="p-toolbar-group-right"></div>
+          <div class="p-toolbar-group-left">
+            <p-button
+              [label]="editMode ? 'Upadte' : 'Create'"
+              icon="pi pi-plus"
+              styleClass="p-button-primary mr-2"
+              [disabled]="!form.valid"
+              (onClick)="onCreate()"
+            ></p-button>
+            <p-button
+              label="Cancle"
+              icon="pi pi-times"
+              styleClass="p-button-secondary"
+              routerLink="/products"
+            ></p-button>
+          </div>
+        </p-toolbar>
+      </div>
+    </div>
+    <div class="grid" style="margin-top: 2px">
+      <div class="col-12 product">
+        <form [formGroup]="form">
+          <div class="formgrid grid">
+            <div class="field col-4">
+              <label for="name" class="ml-2 font-semibold">Name</label>
+              <input
+                formControlName="name"
+                id="name"
+                type="text"
+                class="text-base text-color border-3 surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              />
+              <span
+                *ngIf="
+                  !form.controls['name'].valid && form.controls['name'].touched
+                "
+                class="p-error"
+                >Name is required</span
+              >
+            </div>
+            <div class="field col-4">
+              <label for="brand" class="ml-2 font-semibold">Brand</label>
+              <input
+                formControlName="brand"
+                id="brand"
+                type="text"
+                class="text-base text-color border-3 surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              />
+              <span
+                *ngIf="
+                  !form.controls['brand'].valid &&
+                  form.controls['brand'].touched
+                "
+                class="p-error"
+                >Brand is required</span
+              >
+            </div>
+            <div class="field col-2">
+              <label for="price" class="ml-2 font-semibold">Price</label>
+              <p-inputNumber
+                formControlName="price"
+                mode="decimal"
+                inputId="price"
+                [useGrouping]="false"
+              >
+              </p-inputNumber>
+              <span
+                *ngIf="
+                  !form.controls['price'].valid &&
+                  form.controls['price'].touched
+                "
+                class="p-error"
+                >Price is required</span
+              >
+            </div>
+            <div class="field col-2">
+              <label for="category" class="ml-2 font-semibold">Category</label
+              ><br />
+              <p-dropdown
+                [filter]="true"
+                filterBy="name"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [options]="categories"
+                formControlName="category"
+                inputId="category"
+                placeholder="Select Category"
+              ></p-dropdown>
+              <span
+                *ngIf="
+                  !form.controls['category'].valid &&
+                  form.controls['category'].touched
+                "
+                class="p-error"
+                >Category is required</span
+              >
+            </div>
+            <div class="field col-2">
+              <label for="countInStock" class="ml-2 font-semibold"
+                >Count In Stock</label
+              >
+              <input
+                formControlName="countInStock"
+                id="countInStock"
+                type="number"
+                class="text-base text-color border-3 surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              />
+              <span
+                *ngIf="
+                  !form.controls['countInStock'].valid &&
+                  form.controls['countInStock'].touched
+                "
+                class="p-error"
+                >countInStock is required</span
+              >
+            </div>
+            <div class="field col-2">
+              <label for="isFeatured" class="ml-6 font-semibold"
+                >isFeatured</label
+              ><br />
+              <p-inputSwitch
+                inputId="isFeatured"
+                formControlName="isFeatured"
+                class="ml-6 mt-8"
+              ></p-inputSwitch>
+            </div>
+            <div class="field col-8">
+              <label for="image" class="ml-2 font-semibold">Image</label>
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                class="p-inputtext text-base text-color border-3 surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                (change)="OnImageUpload($event)"
+              />
+              <div>
+                <img
+                  [src]="imageDisplay"
+                  style="
+                    width: 15%;
+                    padding: 3px;
+                    margin-top: 3px;
+                    border-radius: 5px;
+                  "
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="field col-12">
+              <label for="description" class="ml-2 font-semibold"
+                >Description</label
+              >
+              <textarea
+                pInputTextarea
+                inputId="description"
+                formControlName="description"
+                [style]="{ border: '2px solid #b5b5b1' }"
+                class="text-base text-color border-3 surface-overlay p-2 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              ></textarea>
+              <span
+                *ngIf="
+                  !form.controls['description'].valid &&
+                  form.controls['description'].touched
+                "
+                class="p-error"
+                >description is required</span
+              >
+            </div>
+            <div class="field col-12">
+              <label for="richDescription" class="ml-2 font-semibold"
+                >Product Details</label
+              >
+              <p-editor
+                formControlName="richDescription"
+                [style]="{ height: '320px', border: '2px solid #b5b5b1' }"
+              ></p-editor>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-card>
+</div>

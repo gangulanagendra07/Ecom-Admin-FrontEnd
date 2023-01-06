@@ -1,0 +1,75 @@
+<p-toast position="top-right"></p-toast>
+<div class="admin-page">
+  <p-card header="Orders" subheader="list of all orders">
+    <div class="grid">
+      <div class="col-12" *ngIf="orders.length > 0">
+        <p-table
+          [paginator]="true"
+          [rows]="5"
+          [value]="orders"
+          styleClass="p-datatable-gridlines p-datatable-sm"
+          [tableStyle]="{
+            'min-width': '50rem',
+            'min-height': '20px',
+            'max-height': '50px'
+          }"
+          [scrollable]="true"
+          scrollHeight="500px"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="user">
+                User<p-sortIcon field="user"></p-sortIcon>
+              </th>
+              <th pSortableColumn="totalPrice">
+                Total price<p-sortIcon field="totalPrice"></p-sortIcon>
+              </th>
+              <th pSortableColumn="dateOrdered">
+                Date Ordered<p-sortIcon field="dateOrdered"></p-sortIcon>
+              </th>
+              <th pSortableColumn="status">
+                Status<p-sortIcon field="status"></p-sortIcon>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-order>
+            <tr styleClass="max-height: 20px !important">
+              <td class="font-bold">{{ order.user.name }}</td>
+              <td>
+                {{ order.totalPrice }}
+              </td>
+              <td>
+                {{ order.dateOrdered | date : "short" }}
+              </td>
+              <td>
+                <p-tag
+                  [value]="ordersStatus[order.status].label"
+                  [severity]="ordersStatus[order.status].color"
+                ></p-tag>
+              </td>
+              <td>
+                <p-button
+                  (onClick)="DeleteOrder(order.id)"
+                  icon="pi pi-trash"
+                  styleClass="p-button-danger mr-1"
+                ></p-button>
+                <p-button
+                  (onClick)="ShowOrder(order.id)"
+                  icon="pi pi-eye"
+                  styleClass="p-button-primary mr-1"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div
+        class="col-12 flex justify-content-center"
+        *ngIf="orders.length <= 0"
+      >
+        <h2>No Orders Found.!</h2>
+      </div>
+    </div>
+  </p-card>
+</div>

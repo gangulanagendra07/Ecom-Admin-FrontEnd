@@ -1,0 +1,110 @@
+<p-toast position="top-right"></p-toast>
+<div class="container-form">
+  <div class="login-form">
+    <div class="row">
+      <div class="col s12 m6">
+        <div class="card">
+          <div class="card-content">
+            <span
+              class="card-title center-align form-sp"
+              style="margin-bottom: 30px; font-weight: bolder; color: #757272"
+              >Login
+            </span>
+            <form [formGroup]="loginForm">
+              <div class="row">
+                <div class="col s12">
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input id="email" formControlName="email" type="email" />
+                      <label for="email">Email</label>
+                      <small
+                        *ngIf="loginFormCtrl['email'].invalid"
+                        class="error"
+                        ><span
+                          *ngIf="loginFormCtrl['email'].errors?.['required'] ||  !loginForm.controls['email'].valid &&
+                          loginForm.controls['email'].touched"
+                          >email is required</span
+                        >
+                        <span
+                          *ngIf="loginFormCtrl['email'].errors?.['email'] ||  !loginForm.controls['email'].valid &&
+                        loginForm.controls['email'].touched"
+                          >email is invalid</span
+                        ></small
+                      >
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input
+                        id="password"
+                        formControlName="password"
+                        type="password"
+                      />
+                      <label for="password">Password</label>
+                      <span
+                        class="error"
+                        *ngIf="
+                          !loginForm.controls['password'].valid &&
+                          loginForm.controls['password'].touched
+                        "
+                      >
+                        Password is required
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col-12" *ngIf="errorMessage">
+                      <div
+                        class="alert alert-danger"
+                        role="alert"
+                        style="margin-left: 50px; text-align: center"
+                      >
+                        You are Not authorized, Please Register & Login
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <span *ngIf="errorMessage">{{ errorMessage }}</span> -->
+                  <div class="row">
+                    <div
+                      class="input-field col s12"
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                    >
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        style="width: 200px; font-weight: bolder"
+                        (click)="onLogin()"
+                        [disabled]="!loginForm.valid"
+                      >
+                        Login
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div
+                      class="input-field col s12"
+                      style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                      "
+                    >
+                      <span
+                        >If do not register, Please signUp
+                        <a routerLink="/register">SingUp</a></span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
